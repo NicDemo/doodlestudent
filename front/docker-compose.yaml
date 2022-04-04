@@ -1,0 +1,55 @@
+version: "3.3"
+services:
+  web:
+    image: nginx
+    volumes:
+     - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+     - "81:80"
+    environment:
+     - NGINX_HOST=foobar.com
+     - NGINX_PORT=80
+    networks:
+     - my-network-name
+     
+     
+  angular-service:
+    container_name: angular-service
+    build: .
+    networks:
+     - my-network-name
+    #ports:
+     #- "4000:80"
+      #volumes:
+      # - ./nginx.conf:/etc/nginx/nginx.conf
+  back-end-service:
+    container_name: back-end
+    build: ./api
+    networks:
+     - my-network-name
+
+
+
+  db:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+  my_admin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - "8081:80"
+    depends_on: 
+     - db
+    container_name: pma
+    environment:
+      PMA_HOST: db
+      PMA_PORT: "3306"
+      PMA_ARBITRARY: "1"
+
+
+
+networks:
+  my-network-name:
+     
